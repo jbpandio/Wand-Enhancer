@@ -1,0 +1,26 @@
+name: Sync fork from upstream
+
+on:
+  schedule:
+    - cron: '0 * * * *'      # every hour
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Fast-forward master to upstream
+        run: |
+          git remote add upstream https://github.com/k1tbyte/Wand-Enhancer.git
+          git fetch upstream master
+          git checkout master
+          git merge --ff-only upstream/master
+          git push origin master
